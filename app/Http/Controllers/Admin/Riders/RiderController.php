@@ -13,9 +13,13 @@ use Illuminate\View\View;
 
 class RiderController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Rider::class, 'rider');
+    }
+
     public function index(): View
     {
-        $this->authorize('viewAny', Rider::class);
         $stats = [
             'total' => Rider::count(),
             'active' => Rider::where('status', 'active')->count(),
@@ -27,7 +31,6 @@ class RiderController extends Controller
 
     public function show(Request $request, Rider $rider)
     {
-        $this->authorize('view', $rider);
         if ($request->wantsJson() || $request->is('admin/api/*')) {
             $rider->load('supervisor');
             return response()->json(['success' => true, 'data' => new RiderResource($rider)]);
@@ -40,7 +43,6 @@ class RiderController extends Controller
 
     public function list(Request $request): JsonResponse
     {
-        $this->authorize('viewAny', Rider::class);
         $query = Rider::with('supervisor')
             ->search($request->input('search.value'))
             ->filterByStatus($request->input('status'));
@@ -54,30 +56,31 @@ class RiderController extends Controller
         ]);
     }
 
+    /**
+     * Devuelve una lista simple de riders activos para los dropdowns.
+     */
+    public function getActiveRiders(): JsonResponse
+    {
+        $this->authorize('viewAny', Rider::class);
+        $riders = Rider::where('status', 'active')->orderBy('name')->get(['id', 'name']);
+        return response()->json($riders);
+    }
+
     public function store(RiderStoreRequest $request): JsonResponse
     {
-        $this->authorize('create', Rider::class);
         $rider = Rider::create($request->validated());
         return response()->json(['message' => 'Rider created successfully.', 'rider' => new RiderResource($rider)], 201);
     }
 
     public function update(RiderUpdateRequest $request, Rider $rider): JsonResponse
     {
-        $this->authorize('update', $rider);
         $rider->update($request->validated());
         return response()->json(['message' => 'Rider updated successfully.', 'rider' => new RiderResource($rider)]);
     }
 
     public function destroy(Rider $rider): JsonResponse
     {
-        $this->authorize('delete', $rider);
         $rider->delete();
         return response()->json(['message' => 'Rider deleted successfully.']);
-    }
-       public function getActiveRiders(): JsonResponse
-    {
-        $this->authorize('viewAny', Rider::class);
-        $riders = Rider::where('status', 'active')->orderBy('name')->get(['id', 'name']);
-        return response()->json($riders);
     }
 }

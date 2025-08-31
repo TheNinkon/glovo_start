@@ -24,12 +24,14 @@ class AccountController extends Controller
      */
     public function index(): View
     {
+        // Calculamos las estadísticas para las tarjetas de la vista
         $stats = [
             'total' => Account::count(),
             'active' => Account::where('status', 'active')->count(),
             'inactive' => Account::where('status', 'inactive')->count(),
             'blocked' => Account::where('status', 'blocked')->count(),
         ];
+
         return view('admin.accounts.index', compact('stats'));
     }
 
@@ -40,16 +42,14 @@ class AccountController extends Controller
     {
         // Si la petición viene de la API (buscando JSON para el formulario de edición)
         if ($request->wantsJson() || $request->is('admin/api/*')) {
-            return response()->json([
-                'success' => true,
-                'data' => new AccountResource($account)
-            ]);
+            return new AccountResource($account);
         }
 
         // Si es una petición web normal, muestra la vista de detalle
         $account->load('activeAssignment.rider', 'assignments.rider');
         return view('admin.accounts.show', compact('account'));
     }
+
 
     // --- MÉTODOS DE LA API (PARA JAVASCRIPT) ---
 
@@ -64,13 +64,12 @@ class AccountController extends Controller
 
         $totalRecords = $query->count();
         $accounts = $query->skip($request->input('start'))->take($request->input('length'))->latest()->get();
-        $data = AccountResource::collection($accounts);
 
         return response()->json([
             "draw"            => intval($request->input('draw')),
             "recordsTotal"    => $totalRecords,
-            "recordsFiltered" => $totalRecords,
-            "data"            => $data,
+            "recordsFiltered" => $totalRecords, // Simplificado
+            "data"            => AccountResource::collection($accounts),
         ]);
     }
 

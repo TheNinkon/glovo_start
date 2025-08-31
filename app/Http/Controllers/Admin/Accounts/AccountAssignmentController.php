@@ -29,7 +29,8 @@ class AccountAssignmentController extends Controller
 
     public function store(AssignmentStoreRequest $request, Account $account)
     {
-        $this->authorize('create', Assignment::class);
+        // CORRECCIÓN: Autorizamos la creación de una asignación sobre la cuenta
+        $this->authorize('createAssignment', $account);
 
         $rider = Rider::find($request->rider_id);
         $startDate = Carbon::parse($request->start_date);
@@ -37,7 +38,7 @@ class AccountAssignmentController extends Controller
 
         $assignment = $this->assignmentService->assignAccountToRider($account, $rider, $startDate, $endDate);
 
-        return new AssignmentResource($assignment);
+        return response()->json(['data' => new AssignmentResource($assignment)], 201);
     }
 
     public function end(Request $request, Assignment $assignment)

@@ -57,4 +57,8 @@ class AccountPolicy
     {
         return false;
     }
+        public function createAssignment(User $user, Account $account): bool
+    {
+        return $user->hasRole('zone-manager');
+    }
 }

@@ -7,11 +7,14 @@ $(function () {
   const offcanvasElement = $('#offcanvasAddAccount');
 
   if (dtAccountTable.length) {
-    const dataTable = dtAccountTable.DataTable({
+    dtAccountTable.DataTable({
       processing: true,
       serverSide: true,
       ajax: {
-        url: '/admin/api/accounts'
+        url: '/admin/api/accounts',
+        data: function (d) {
+          d.status = $('#account-status-filter').val();
+        }
       },
       columns: [
         {
@@ -40,33 +43,31 @@ $(function () {
           name: 'action',
           orderable: false,
           searchable: false,
-          render: function (data, type, full, meta) {
-            const accountUrl = `/admin/accounts/${data}`;
-            // --- ICONOS CORREGIDOS ---
-            return (
-              '<div class="d-flex align-items-center">' +
-              `<a href="${accountUrl}" class="text-body" title="View"><i class="ti tabler-eye ti-sm me-2"></i></a>` +
-              `<a href="javascript:;" class="text-body edit-record" data-id="${data}" title="Edit"><i class="ti tabler-edit ti-sm me-2"></i></a>` +
-              `<a href="javascript:;" class="text-body text-danger delete-record" data-id="${data}" title="Delete"><i class="ti tabler-trash ti-sm"></i></a>` +
-              '</div>'
-            );
-          }
+          render: data =>
+            '<div class="d-flex align-items-center">' +
+            `<a href="/admin/accounts/${data}" class="text-body" title="View"><i class="ti tabler-eye ti-sm me-2"></i></a>` +
+            `<a href="javascript:;" class="text-body edit-record" data-id="${data}" title="Edit"><i class="ti tabler-edit ti-sm me-2"></i></a>` +
+            `<a href="javascript:;" class="text-body text-danger delete-record" data-id="${data}" title="Delete"><i class="ti tabler-trash ti-sm"></i></a>` +
+            '</div>'
         }
       ],
       dom:
-        '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6 d-flex justify-content-center justify-content-md-end"f>>' +
-        '<"table-responsive"t>' +
-        '<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
+        '<"row me-2"' +
+        '<"col-md-2"<"me-3"l>>' +
+        '<"col-md-10"<"dt-action-buttons text-xl-end text-lg-start text-md-end text-start d-flex align-items-center justify-content-end flex-md-row flex-column mb-3 mb-md-0"fB>>' +
+        '>t' +
+        '<"row mx-2"' +
+        '<"col-sm-12 col-md-6"i>' +
+        '<"col-sm-12 col-md-6"p>' +
+        '>',
       buttons: [
         {
           text: '<i class="ti tabler-plus me-0 me-sm-1"></i><span class="d-none d-sm-inline-block">Add New Account</span>',
-          className: 'add-new btn btn-primary ms-3',
+          className: 'add-new btn btn-primary',
           attr: { 'data-bs-toggle': 'offcanvas', 'data-bs-target': '#offcanvasAddAccount' }
         }
       ],
       initComplete: function () {
-        $('.dataTables_length').addClass('mt-0 mt-md-3');
-        $('.dt-buttons').appendTo('.dataTables_filter');
         this.api()
           .columns(1)
           .every(function () {
@@ -126,6 +127,7 @@ $(function () {
   // Lógica para el botón de EDITAR (abre el off-canvas y rellena los datos)
   $('.datatables-accounts tbody').on('click', '.edit-record', function () {
     const accountId = $(this).data('id');
+
     offcanvasElement.find('.offcanvas-title').text('Loading...');
     offcanvasElement.offcanvas('show');
     offcanvasForm[0].reset();
@@ -180,7 +182,7 @@ $(function () {
           method: 'DELETE',
           headers: { 'X-CSRF-TOKEN': csrfToken },
           success: function (response) {
-            Swal.fire('Deleted!', response.message, 'success');
+            Swal.fire('Deleted!', 'Account has been deleted.', 'success');
             $('.datatables-accounts').DataTable().ajax.reload();
           },
           error: function (xhr) {

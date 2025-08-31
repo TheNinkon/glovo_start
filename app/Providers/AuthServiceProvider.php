@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-// Añadimos las importaciones completas
+// Importaciones corregidas para apuntar a la ubicación real de tus archivos
 use App\Models\Account;
 use App\Models\Assignment;
 use App\Models\Rider;
@@ -19,7 +19,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // Usamos la sintaxis ::class para evitar errores de tipeo
+        // Usamos la sintaxis ::class para evitar errores de tipeo y de namespace
         Rider::class => RiderPolicy::class,
         Account::class => AccountPolicy::class,
         Assignment::class => AssignmentPolicy::class,

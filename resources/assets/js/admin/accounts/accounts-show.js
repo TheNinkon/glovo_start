@@ -39,7 +39,8 @@ $(function () {
     e.preventDefault();
     const formData = new FormData(this);
 
-    fetch(`/admin/accounts/${accountId}/assignments`, {
+    // CORRECCIÓN: La URL debe apuntar al endpoint de la API
+    fetch(`/admin/api/accounts/${accountId}/assignments`, {
       method: 'POST',
       body: new URLSearchParams(formData),
       headers: { 'X-CSRF-TOKEN': csrfToken, Accept: 'application/json' }
@@ -53,6 +54,10 @@ $(function () {
           const errors = data.errors ? '<br><small>' + Object.values(data.errors).flat().join('<br>') + '</small>' : '';
           Swal.fire('Error!', message + errors, 'error');
         }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        Swal.fire('Error!', 'An unexpected error occurred.', 'error');
       });
   });
 
@@ -64,10 +69,16 @@ $(function () {
       text: "This will end the rider's current assignment with this account.",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, end it!'
+      confirmButtonText: 'Yes, end it!',
+      customClass: {
+        confirmButton: 'btn btn-primary me-3',
+        cancelButton: 'btn btn-label-secondary'
+      },
+      buttonsStyling: false
     }).then(result => {
       if (result.isConfirmed) {
-        fetch(`/admin/assignments/${assignmentId}/end`, {
+        fetch(`/admin/api/assignments/${assignmentId}/end`, {
+          // URL debe apuntar a la API
           method: 'POST',
           headers: { 'X-CSRF-TOKEN': csrfToken, Accept: 'application/json' }
         })
