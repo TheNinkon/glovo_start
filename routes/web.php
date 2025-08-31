@@ -1,21 +1,25 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\language\LanguageController;
-use App\Http\Controllers\pages\HomePage;
-use App\Http\Controllers\pages\Page2;
-use App\Http\Controllers\pages\MiscError;
-use App\Http\Controllers\authentications\LoginBasic;
-use App\Http\Controllers\authentications\RegisterBasic;
 
-// Main Page Route
-Route::get('/', [HomePage::class, 'index'])->name('pages-home');
-Route::get('/page-2', [Page2::class, 'index'])->name('pages-page-2');
+// Importamos los controladores de autenticación con alias para mayor claridad
+use App\Http\Controllers\Admin\Auth\LoginController as AdminLoginController;
+use App\Http\Controllers\Rider\Auth\LoginController as RiderLoginController;
 
-// locale
-Route::get('/lang/{locale}', [LanguageController::class, 'swap']);
-Route::get('/pages/misc-error', [MiscError::class, 'index'])->name('pages-misc-error');
+/*
+|--------------------------------------------------------------------------
+| Rutas Web
+|--------------------------------------------------------------------------
+*/
 
-// authentication
-Route::get('/auth/login-basic', [LoginBasic::class, 'index'])->name('auth-login-basic');
-Route::get('/auth/register-basic', [RegisterBasic::class, 'index'])->name('auth-register-basic');
+// --- RUTAS DE LOGIN PARA RIDERS (en la raíz del sitio) ---
+Route::get('/', [RiderLoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
+Route::post('/', [RiderLoginController::class, 'login'])->middleware('guest');
+Route::post('/rider/logout', [RiderLoginController::class, 'logout'])->name('rider.logout')->middleware('auth');
+
+// --- RUTAS DE LOGIN PARA ADMIN (con prefijo /admin) ---
+Route::prefix('admin')->as('admin.')->group(function () {
+    Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('login')->middleware('guest');
+    Route::post('/login', [AdminLoginController::class, 'login'])->middleware('guest');
+    Route::post('/logout', [AdminLoginController::class, 'logout'])->name('logout')->middleware('auth');
+});
