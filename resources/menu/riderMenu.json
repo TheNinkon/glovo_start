@@ -1,0 +1,11 @@
+{
+  "menu": [
+    {
+      "url": "/rider/dashboard",
+      "name": "Mi Dashboard",
+      "icon": "menu-icon ti tabler-dashboard",
+      "slug": "rider-dashboard",
+      "route": "rider.dashboard"
+    }
+  ]
+}

@@ -45,7 +45,7 @@
                 <input type="password" id="password" class="form-control" name="password"
                   placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                   aria-describedby="password" />
-                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                <span class="input-group-text cursor-pointer"><i class="ti tabler-eye-off"></i></span>
               </div>
             </div>
             <div class="mb-3">

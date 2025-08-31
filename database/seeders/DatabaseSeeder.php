@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Llama al seeder de roles y permisos
-        $this->call(RolesAndPermissionsSeeder::class);
+        // El orden es importante: primero roles, luego los datos que dependen de ellos.
+$this->call([
+    RolesAndPermissionsSeeder::class,
+    ModelDataSeeder::class, // Este ya crea Riders
+    AccountSeeder::class,   // Este crea Accounts y Assignments
+]);
     }
 }

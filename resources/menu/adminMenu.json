@@ -1,0 +1,28 @@
+{
+  "menu": [
+    {
+      "url": "/admin/dashboard",
+      "name": "Dashboard",
+      "icon": "menu-icon tf-icons ti tabler-smart-home",
+      "slug": "admin-dashboard",
+      "route": "admin.dashboard"
+    },
+    {
+      "menuHeader": "Management"
+    },
+    {
+      "url": "/admin/riders",
+      "name": "Riders",
+      "icon": "menu-icon tf-icons ti tabler-motorbike",
+      "slug": "admin-riders-management",
+      "route": "admin.riders.index"
+    },
+    {
+      "url": "/admin/accounts",
+      "name": "Accounts",
+      "icon": "menu-icon tf-icons ti tabler-id",
+      "slug": "admin-accounts-management",
+      "route": "admin.accounts.index"
+    }
+  ]
+}

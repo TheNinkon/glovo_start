@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
+// Apuntamos a la nueva ruta del controlador
+use App\Http\Controllers\Rider\Dashboard\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -9,5 +10,6 @@ use App\Http\Controllers\DashboardController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('/dashboard', [DashboardController::class, 'riderDashboard'])->name('rider.dashboard');
-// Aquí irán todas las demás rutas para el rider
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('rider.dashboard');
+
+// Aquí irán todas las demás rutas para el rol de rider
