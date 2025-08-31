@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-// Importaciones corregidas para apuntar a la ubicación real de tus archivos
+// Añadimos las importaciones completas a los Modelos y Policies
 use App\Models\Account;
 use App\Models\Assignment;
 use App\Models\Rider;
@@ -19,7 +19,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // Usamos la sintaxis ::class para evitar errores de tipeo y de namespace
+        // Usamos la sintaxis ::class para asegurar la resolución correcta
         Rider::class => RiderPolicy::class,
         Account::class => AccountPolicy::class,
         Assignment::class => AssignmentPolicy::class,
@@ -30,7 +30,6 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Esta línea es importante para que se registren las policies
         $this->registerPolicies();
     }
 }

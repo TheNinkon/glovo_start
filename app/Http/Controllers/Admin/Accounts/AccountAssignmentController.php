@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin\Accounts;
 
 use App\Http\Controllers\Controller;
@@ -29,7 +30,7 @@ class AccountAssignmentController extends Controller
 
     public function store(AssignmentStoreRequest $request, Account $account)
     {
-        // CORRECCIÓN: Autorizamos la creación de una asignación sobre la cuenta
+        // CORRECCIÓN: Autorizamos la habilidad de 'createAssignment' sobre la $account.
         $this->authorize('createAssignment', $account);
 
         $rider = Rider::find($request->rider_id);
@@ -38,7 +39,11 @@ class AccountAssignmentController extends Controller
 
         $assignment = $this->assignmentService->assignAccountToRider($account, $rider, $startDate, $endDate);
 
-        return response()->json(['data' => new AssignmentResource($assignment)], 201);
+        return response()->json([
+            'success' => true,
+            'message' => 'Account assigned successfully.',
+            'data' => new AssignmentResource($assignment)
+        ], 201);
     }
 
     public function end(Request $request, Assignment $assignment)

@@ -23,20 +23,15 @@ Route::get('/accounts/{account}', [AccountController::class, 'show'])->name('adm
 
 // --- RUTAS DE API (devuelven JSON) ---
 Route::prefix('api')->name('admin.api.')->group(function () {
+
     // Endpoints para Riders
     Route::get('/riders', [RiderController::class, 'list'])->name('riders.list');
     Route::get('/riders/active-list', [RiderController::class, 'getActiveRiders'])->name('riders.active-list');
-    Route::post('/riders', [RiderController::class, 'store'])->name('riders.store');
-    Route::get('/riders/{rider}', [RiderController::class, 'show'])->name('riders.show');
-    Route::put('/riders/{rider}', [RiderController::class, 'update'])->name('riders.update');
-    Route::delete('/riders/{rider}', [RiderController::class, 'destroy'])->name('riders.destroy');
+    Route::apiResource('riders', RiderController::class)->except(['index']);
 
     // Endpoints para Accounts
     Route::get('/accounts', [AccountController::class, 'list'])->name('accounts.list');
-    Route::post('/accounts', [AccountController::class, 'store'])->name('accounts.store');
-    Route::get('/accounts/{account}', [AccountController::class, 'show'])->name('accounts.show');
-    Route::put('/accounts/{account}', [AccountController::class, 'update'])->name('accounts.update');
-    Route::delete('/accounts/{account}', [AccountController::class, 'destroy'])->name('accounts.destroy');
+    Route::apiResource('accounts', AccountController::class)->except(['index']);
 
     // Endpoints para Assignments
     Route::get('/accounts/{account}/assignments', [AccountAssignmentController::class, 'index'])->name('accounts.assignments.index');
