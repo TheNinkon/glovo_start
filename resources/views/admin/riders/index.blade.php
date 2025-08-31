@@ -111,6 +111,8 @@
             <th>Rider</th>
             <th>Phone</th>
             <th>Status</th>
+            <th>City</th>
+            <th>Contract Hours</th>
             <th>Supervisor</th>
             <th>Actions</th>
           </tr>
@@ -148,6 +150,21 @@
               <option value="inactive">Inactive</option>
               <option value="blocked">Blocked</option>
             </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="add-rider-city">City</label>
+            <select id="add-rider-city" name="city_code" class="form-select">
+              <option value="">(none)</option>
+              <option value="FIG">FIG</option>
+              <option value="GRO">GRO</option>
+              <option value="CAL">CAL</option>
+              <option value="MAT">MAT</option>
+              <option value="BCN">BCN</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="add-rider-contract-hours">Contract Hours / Week</label>
+            <input type="number" min="0" step="1" id="add-rider-contract-hours" class="form-control" placeholder="e.g. 30" name="contract_hours_per_week" required />
           </div>
           <button type="submit" class="btn btn-primary me-sm-3 me-1 data-submit">Submit</button>
           <button type="reset" class="btn btn-label-secondary" data-bs-dismiss="offcanvas">Cancel</button>

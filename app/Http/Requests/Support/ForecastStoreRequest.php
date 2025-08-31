@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Support;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Forecast;
 
 class ForecastStoreRequest extends FormRequest
 {
@@ -11,7 +12,10 @@ class ForecastStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = $this->user();
+        if (!$user) return false;
+        // Autoriza a super-admin (por Gate::before) y a zone-manager para crear
+        return $user->can('create', Forecast::class);
     }
 
     /**
@@ -22,7 +26,11 @@ class ForecastStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => ['required', 'string', 'max:255'],
+            'week_start' => ['required', 'date'],
+            'week_end' => ['required', 'date', 'after_or_equal:week_start'],
+            'selection_deadline_at' => ['required', 'date'],
+            'status' => ['required', 'in:draft,published,closed'],
         ];
     }
 }

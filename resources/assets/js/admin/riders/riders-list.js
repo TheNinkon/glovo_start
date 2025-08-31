@@ -46,6 +46,16 @@ $(function () {
             } text-capitalize">${statusObj[data]?.title || 'Unknown'}</span>`;
           }
         },
+        { data: 'city_code', name: 'city_code', defaultContent: '-' },
+        { data: 'city_code', name: 'city_code', defaultContent: '-' },
+        {
+          data: 'contract_hours_per_week',
+          name: 'contract_hours_per_week',
+          render: function (data) {
+            const hours = typeof data === 'number' ? data : parseInt(data || 0, 10);
+            return `${isNaN(hours) ? 0 : hours} h`;
+          }
+        },
         { data: 'supervisor_name', name: 'supervisor.name', defaultContent: 'N/A' },
         // Columna de Acciones
         {
@@ -139,25 +149,29 @@ $(function () {
     $.ajax({
       url: `/admin/api/riders/${riderId}`,
       method: 'GET',
-      success: function (response) {
-        if (response.success) {
-          const rider = response.data;
-          $('#offcanvasAddRiderLabel').text('Edit Rider');
-          $('#rider_id').val(rider.id);
-          $('#add-rider-name').val(rider.name);
-          $('#add-rider-email').val(rider.email);
-          $('#add-rider-phone').val(rider.phone);
-          $('#add-rider-status').val(rider.status);
-        }
-      }
-    });
-  });
+          success: function (response) {
+            if (response.success) {
+              const rider = response.data;
+              $('#offcanvasAddRiderLabel').text('Edit Rider');
+              $('#rider_id').val(rider.id);
+              $('#add-rider-name').val(rider.name);
+              $('#add-rider-email').val(rider.email);
+              $('#add-rider-phone').val(rider.phone);
+              $('#add-rider-status').val(rider.status);
+              $('#add-rider-contract-hours').val(rider.contract_hours_per_week || 0);
+              $('#add-rider-city').val(rider.city_code || '');
+              $('#add-rider-city').val(rider.city_code || '');
+            }
+          }
+        });
+      });
 
   // Resetear el formulario cuando se abre para AÑADIR
   $('.card-datatable').on('click', '.add-new', function () {
     $('#rider_id').val('');
     $('#offcanvasAddRiderLabel').text('Add Rider');
     offcanvasForm[0].reset();
+    $('#add-rider-contract-hours').val(0);
   });
 
   // Lógica para ELIMINAR un rider

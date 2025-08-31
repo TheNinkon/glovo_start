@@ -10,6 +10,7 @@ use App\Models\Forecast;
 use App\Models\ForecastSlot;
 use App\Models\RiderSchedule;
 use App\Models\RiderWildcard;
+use App\Models\RiderForecastState;
 
 use App\Policies\AccountPolicy;
 use App\Policies\AssignmentPolicy;
@@ -18,7 +19,9 @@ use App\Policies\Policies\ForecastPolicy;
 use App\Policies\Policies\ForecastSlotPolicy;
 use App\Policies\Policies\RiderSchedulePolicy;
 use App\Policies\Policies\RiderWildcardPolicy;
+use App\Policies\RiderForecastStatePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -36,6 +39,7 @@ class AuthServiceProvider extends ServiceProvider
         ForecastSlot::class => ForecastSlotPolicy::class,
         RiderSchedule::class => RiderSchedulePolicy::class,
         RiderWildcard::class => RiderWildcardPolicy::class,
+        RiderForecastState::class => RiderForecastStatePolicy::class,
     ];
 
     /**
@@ -43,7 +47,12 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Esta línea es importante para que se registren las policies
+        // Registrar policies mapeadas
         $this->registerPolicies();
+
+        // Allow all abilities to super-admin as a global override
+        Gate::before(function ($user, $ability) {
+            return method_exists($user, 'hasRole') && $user->hasRole('super-admin') ? true : null;
+        });
     }
 }

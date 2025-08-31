@@ -8,12 +8,16 @@ use Illuminate\Auth\Access\Response;
 
 class ForecastPolicy
 {
+    public function before(User $user, $ability): ?bool
+    {
+        return $user->hasRole('super-admin') ? true : null;
+    }
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->can('forecasts.view') || $user->hasAnyRole(['super-admin', 'zone-manager', 'support', 'finance']);
     }
 
     /**
@@ -21,7 +25,7 @@ class ForecastPolicy
      */
     public function view(User $user, Forecast $forecast): bool
     {
-        return false;
+        return $this->viewAny($user);
     }
 
     /**
@@ -29,7 +33,9 @@ class ForecastPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        // Permiso explícito o roles con atribuciones
+        return $user->can('forecasts.create') || $user->can('forecasts.upload')
+            || $user->hasAnyRole(['zone-manager', 'support', 'finance']);
     }
 
     /**
@@ -37,7 +43,7 @@ class ForecastPolicy
      */
     public function update(User $user, Forecast $forecast): bool
     {
-        return false;
+        return $user->can('forecasts.manage') || $user->hasRole('zone-manager');
     }
 
     /**
@@ -45,7 +51,7 @@ class ForecastPolicy
      */
     public function delete(User $user, Forecast $forecast): bool
     {
-        return false;
+        return $user->can('forecasts.manage') || $user->hasRole('zone-manager');
     }
 
     /**

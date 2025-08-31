@@ -31,7 +31,8 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials, $request->boolean('remember-me'))) {
-            if (!Auth::user()->hasRole('super-admin')) {
+            // Permitimos acceso a Admin a super-admin, zone-manager, support, finance
+            if (!Auth::user()->hasAnyRole(['super-admin', 'zone-manager', 'support', 'finance'])) {
                 Auth::logout();
                 throw ValidationException::withMessages([
                     'email' => __('auth.failed'),

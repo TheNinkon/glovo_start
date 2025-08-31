@@ -38,6 +38,10 @@
                 <span>{{ $rider->phone ?? 'N/A' }}</span>
               </li>
               <li class="mb-3">
+                <span class="fw-medium me-2">Contract Hours / Week:</span>
+                <span>{{ $rider->contract_hours_per_week ?? 0 }} h</span>
+              </li>
+              <li class="mb-3">
                 <span class="fw-medium me-2">Supervisor:</span>
                 <span>{{ $rider->supervisor->name ?? 'N/A' }}</span>
               </li>

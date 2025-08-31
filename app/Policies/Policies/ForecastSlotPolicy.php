@@ -8,12 +8,16 @@ use Illuminate\Auth\Access\Response;
 
 class ForecastSlotPolicy
 {
+    public function before(User $user, $ability): ?bool
+    {
+        return $user->hasRole('super-admin') ? true : null;
+    }
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasAnyRole(['zone-manager', 'support', 'finance']);
     }
 
     /**
@@ -21,7 +25,7 @@ class ForecastSlotPolicy
      */
     public function view(User $user, ForecastSlot $forecastSlot): bool
     {
-        return false;
+        return $this->viewAny($user);
     }
 
     /**
@@ -29,7 +33,7 @@ class ForecastSlotPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole('zone-manager');
     }
 
     /**
@@ -37,7 +41,7 @@ class ForecastSlotPolicy
      */
     public function update(User $user, ForecastSlot $forecastSlot): bool
     {
-        return false;
+        return $user->hasRole('zone-manager');
     }
 
     /**
@@ -45,7 +49,7 @@ class ForecastSlotPolicy
      */
     public function delete(User $user, ForecastSlot $forecastSlot): bool
     {
-        return false;
+        return $user->hasRole('zone-manager');
     }
 
     /**

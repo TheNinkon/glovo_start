@@ -23,4 +23,15 @@ class ForecastSlot extends Model
         }
         return $this->riderSchedules()->where('status', 'reserved')->count();
     }
+
+    public function getDurationMinutesAttribute(): int
+    {
+        try {
+            $start = \Carbon\Carbon::parse($this->start_time);
+            $end = \Carbon\Carbon::parse($this->end_time);
+            return max(0, $end->diffInMinutes($start));
+        } catch (\Throwable $e) {
+            return 0;
+        }
+    }
 }

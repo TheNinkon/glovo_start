@@ -16,3 +16,4 @@ class SufficientCapacity implements ValidationRule
         }
     }
 }
+

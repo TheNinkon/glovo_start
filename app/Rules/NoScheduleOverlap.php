@@ -13,9 +13,10 @@ class NoScheduleOverlap implements ValidationRule
         $slotToBook = ForecastSlot::find($value);
         if (!$slotToBook) { return; }
 
-        $riderId = auth()->user()->rider->id; // Asume que el usuario autenticado tiene una relación 'rider'
+        $rider = auth()->user()->rider ?? null;
+        if (!$rider) return; // Sin perfil no validamos aquí
 
-        $hasOverlap = RiderSchedule::where('rider_id', $riderId)
+        $hasOverlap = RiderSchedule::where('rider_id', $rider->id)
             ->where('status', 'reserved')
             ->whereHas('forecastSlot', function ($query) use ($slotToBook) {
                 $query->where('date', $slotToBook->date)
@@ -33,3 +34,4 @@ class NoScheduleOverlap implements ValidationRule
         }
     }
 }
+

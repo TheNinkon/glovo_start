@@ -19,6 +19,8 @@ class Rider extends Model
         'status',
         'supervisor_id',
         'user_id',
+        'contract_hours_per_week',
+        'city_code',
     ];
 
     // RELACIONES

@@ -26,6 +26,8 @@ class RiderUpdateRequest extends FormRequest
             'phone' => 'nullable|string|max:30',
             'status' => 'required|in:active,inactive,blocked',
             'supervisor_id' => 'nullable|exists:riders,id',
+            'contract_hours_per_week' => 'required|integer|min:0',
+            'city_code' => 'nullable|in:FIG,GRO,CAL,MAT,BCN',
         ];
     }
 }

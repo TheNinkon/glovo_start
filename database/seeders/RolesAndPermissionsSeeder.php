@@ -18,6 +18,24 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
+        // Define permissions used across the app
+        $permissions = [
+            // Forecasts
+            'forecasts.view',
+            'forecasts.create',
+            'forecasts.upload',
+            'forecasts.manage',
+            // Rider schedules
+            'schedules.reserve',
+            'schedules.cancel',
+            'schedules.commit',
+            // Wildcards
+            'wildcards.grant',
+        ];
+        foreach ($permissions as $perm) {
+            Permission::firstOrCreate(['name' => $perm]);
+        }
+
         // Definir los roles
         $roles = [
             'super-admin',
@@ -28,9 +46,24 @@ class RolesAndPermissionsSeeder extends Seeder
         ];
 
         // Crear los roles
+        $roleModels = [];
         foreach ($roles as $roleName) {
-            Role::create(['name' => $roleName]);
+            $roleModels[$roleName] = Role::firstOrCreate(['name' => $roleName]);
         }
+
+        // Assign permissions to roles
+        // super-admin gets all permissions
+        $roleModels['super-admin']->givePermissionTo($permissions);
+        // zone-manager: full forecasts + wildcards
+        $roleModels['zone-manager']->givePermissionTo([
+            'forecasts.view','forecasts.create','forecasts.upload','forecasts.manage','wildcards.grant'
+        ]);
+        // support: can view and upload forecasts
+        $roleModels['support']->givePermissionTo(['forecasts.view','forecasts.upload']);
+        // finance: can view and upload forecasts
+        $roleModels['finance']->givePermissionTo(['forecasts.view','forecasts.upload']);
+        // rider: schedule actions
+        $roleModels['rider']->givePermissionTo(['schedules.reserve','schedules.cancel','schedules.commit']);
 
         // Crear un usuario Super Admin
         $superAdmin = User::factory()->create([

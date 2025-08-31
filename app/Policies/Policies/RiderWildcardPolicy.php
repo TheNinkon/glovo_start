@@ -8,12 +8,16 @@ use Illuminate\Auth\Access\Response;
 
 class RiderWildcardPolicy
 {
+    public function before(User $user, $ability): ?bool
+    {
+        return $user->hasRole('super-admin') ? true : null;
+    }
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasAnyRole(['zone-manager', 'support', 'finance']);
     }
 
     /**
@@ -21,7 +25,7 @@ class RiderWildcardPolicy
      */
     public function view(User $user, RiderWildcard $riderWildcard): bool
     {
-        return false;
+        return $this->viewAny($user);
     }
 
     /**
@@ -29,7 +33,7 @@ class RiderWildcardPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->hasRole('zone-manager');
     }
 
     /**
@@ -37,7 +41,7 @@ class RiderWildcardPolicy
      */
     public function update(User $user, RiderWildcard $riderWildcard): bool
     {
-        return false;
+        return $user->hasRole('zone-manager');
     }
 
     /**
@@ -45,7 +49,7 @@ class RiderWildcardPolicy
      */
     public function delete(User $user, RiderWildcard $riderWildcard): bool
     {
-        return false;
+        return $user->hasRole('zone-manager');
     }
 
     /**

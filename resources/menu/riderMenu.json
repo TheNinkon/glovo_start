@@ -7,5 +7,13 @@
       "slug": "rider-dashboard",
       "route": "rider.dashboard"
     }
+    ,
+    {
+      "url": "/rider/schedule",
+      "name": "Mis Horarios",
+      "icon": "menu-icon ti tabler-calendar-plus",
+      "slug": "rider-schedule",
+      "route": "rider.schedule.index"
+    }
   ]
 }

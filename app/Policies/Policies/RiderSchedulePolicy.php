@@ -8,12 +8,16 @@ use Illuminate\Auth\Access\Response;
 
 class RiderSchedulePolicy
 {
+    public function before(User $user, $ability): ?bool
+    {
+        return $user->hasRole('super-admin') ? true : null;
+    }
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->hasAnyRole(['zone-manager', 'support', 'finance']);
     }
 
     /**
@@ -21,7 +25,7 @@ class RiderSchedulePolicy
      */
     public function view(User $user, RiderSchedule $riderSchedule): bool
     {
-        return false;
+        return $this->viewAny($user);
     }
 
     /**
@@ -29,7 +33,8 @@ class RiderSchedulePolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        // Riders pueden crear sus propios horarios
+        return $user->hasRole('rider');
     }
 
     /**
@@ -37,7 +42,7 @@ class RiderSchedulePolicy
      */
     public function update(User $user, RiderSchedule $riderSchedule): bool
     {
-        return false;
+        return $user->hasRole('zone-manager');
     }
 
     /**
@@ -45,7 +50,7 @@ class RiderSchedulePolicy
      */
     public function delete(User $user, RiderSchedule $riderSchedule): bool
     {
-        return false;
+        return $user->hasRole('zone-manager');
     }
 
     /**
