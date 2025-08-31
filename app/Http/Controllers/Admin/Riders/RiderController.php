@@ -74,4 +74,10 @@ class RiderController extends Controller
         $rider->delete();
         return response()->json(['message' => 'Rider deleted successfully.']);
     }
+       public function getActiveRiders(): JsonResponse
+    {
+        $this->authorize('viewAny', Rider::class);
+        $riders = Rider::where('status', 'active')->orderBy('name')->get(['id', 'name']);
+        return response()->json($riders);
+    }
 }

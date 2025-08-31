@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+// Añadimos las importaciones completas
 use App\Models\Account;
 use App\Models\Assignment;
 use App\Models\Rider;
@@ -18,10 +19,10 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        // Usamos la sintaxis ::class para evitar errores de tipeo
         Rider::class => RiderPolicy::class,
-        Account::class => AccountPolicy::class, // <-- Asegúrate de que esta línea exista
-        Assignment::class => AssignmentPolicy::class, // <-- Y esta también
+        Account::class => AccountPolicy::class,
+        Assignment::class => AssignmentPolicy::class,
     ];
 
     /**
@@ -29,6 +30,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Esta línea es importante para que se registren las policies
         $this->registerPolicies();
     }
 }

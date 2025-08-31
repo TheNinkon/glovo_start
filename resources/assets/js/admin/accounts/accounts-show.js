@@ -9,17 +9,30 @@ $(function () {
 
   // Poblar el selector de riders
   function loadRiders() {
-    fetch('/admin/api/riders') // Asume que tienes un endpoint que devuelve todos los riders
-      .then(response => response.json())
-      .then(data => {
+    // Apuntamos al nuevo endpoint '/admin/api/riders/active-list'
+    fetch('/admin/api/riders/active-list')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(riders => {
         riderSelect.empty().append('<option value="">Select a Rider</option>');
-        data.data.data.forEach(rider => {
+        riders.forEach(rider => {
           riderSelect.append(`<option value="${rider.id}">${rider.name}</option>`);
         });
+      })
+      .catch(error => {
+        console.error('Failed to load riders:', error);
+        riderSelect.empty().append('<option value="">Error loading riders</option>');
       });
   }
 
-  $('#assignRiderModal').on('show.bs.modal', loadRiders);
+  // Evento para cargar los riders cuando se abre el modal
+  $('#assignRiderModal').on('show.bs.modal', function () {
+    loadRiders();
+  });
 
   // Enviar el formulario de nueva asignación
   assignRiderForm.on('submit', function (e) {
@@ -33,10 +46,12 @@ $(function () {
     })
       .then(response => response.json())
       .then(data => {
-        if (data.id) {
+        if (data.data && data.data.id) {
           Swal.fire('Success!', 'Account assigned successfully.', 'success').then(() => location.reload());
         } else {
-          Swal.fire('Error!', data.message || 'Could not assign account.', 'error');
+          const message = data.message || 'Could not assign account.';
+          const errors = data.errors ? '<br><small>' + Object.values(data.errors).flat().join('<br>') + '</small>' : '';
+          Swal.fire('Error!', message + errors, 'error');
         }
       });
   });
@@ -58,7 +73,7 @@ $(function () {
         })
           .then(response => response.json())
           .then(data => {
-            if (data.id) {
+            if (data.data && data.data.id) {
               Swal.fire('Success!', 'Assignment ended successfully.', 'success').then(() => location.reload());
             } else {
               Swal.fire('Error!', data.message || 'Could not end assignment.', 'error');
