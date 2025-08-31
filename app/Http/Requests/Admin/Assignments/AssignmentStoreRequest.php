@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Admin\Assignments;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Assignment;
+use App\Models\Account;
 
 class AssignmentStoreRequest extends FormRequest
 {
@@ -11,7 +13,16 @@ class AssignmentStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        $user = $this->user();
+        if (!$user) {
+            return false;
+        }
+
+        /** @var Account|null $account */
+        $account = $this->route('account');
+
+        // Autoriza si el usuario puede crear asignaciones en general o sobre esta cuenta
+        return $user->can('create', Assignment::class) || ($account && $user->can('createAssignment', $account));
     }
 
     /**
@@ -22,7 +33,9 @@ class AssignmentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'rider_id' => ['required', 'exists:riders,id'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
         ];
     }
 }

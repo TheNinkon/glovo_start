@@ -1,5 +1,6 @@
 <?php
-namespace Database\Seeders;
+
+namespace Database\Seeders; // <-- Asegúrate de que sea este, sin la subcarpeta
 
 use App\Models\Account;
 use App\Models\Assignment;
@@ -12,6 +13,12 @@ class AccountSeeder extends Seeder
     {
         Account::factory(20)->create();
         $riders = Rider::all();
+
+        // Asegúrate de que haya riders antes de intentar usarlos
+        if ($riders->isEmpty()) {
+            return;
+        }
+
         $accounts = Account::where('status', 'active')->get();
 
         // Crear una asignación activa para 5 cuentas

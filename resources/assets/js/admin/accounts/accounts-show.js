@@ -1,6 +1,12 @@
 'use strict';
 
 $(function () {
+  // Move modal to body to avoid aria-hidden focus issues
+  const modalEl = document.getElementById('assignRiderModal');
+  if (modalEl && modalEl.parentElement !== document.body) {
+    document.body.appendChild(modalEl);
+  }
+
   const assignRiderForm = $('#assignRiderForm');
   const endAssignmentBtn = $('#end-assignment-btn');
   const riderSelect = $('#rider_id');
@@ -19,6 +25,26 @@ $(function () {
   }
 
   $('#assignRiderModal').on('show.bs.modal', loadRiders);
+
+  // Ensure a11y attributes are consistent to avoid aria-hidden warning
+  $('#assignRiderModal')
+    .on('show.bs.modal', function () {
+      // Ensure aria-hidden is not true while about to show
+      this.setAttribute('aria-hidden', 'false');
+      this.setAttribute('aria-modal', 'true');
+    })
+    .on('shown.bs.modal', function () {
+      this.setAttribute('aria-hidden', 'false');
+      this.setAttribute('aria-modal', 'true');
+    })
+    .on('hide.bs.modal', function () {
+      // Blur focused element before aria-hidden is applied during fade
+      if (document.activeElement) document.activeElement.blur();
+    })
+    .on('hidden.bs.modal', function () {
+      this.setAttribute('aria-hidden', 'true');
+      this.removeAttribute('aria-modal');
+    });
 
   assignRiderForm.on('submit', function (e) {
     e.preventDefault();
@@ -58,7 +84,12 @@ $(function () {
       text: "This will end the rider's current assignment.",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, end it!'
+      confirmButtonText: 'Yes, end it!',
+      customClass: {
+        confirmButton: 'btn btn-primary me-3',
+        cancelButton: 'btn btn-label-secondary'
+      },
+      buttonsStyling: false
     }).then(result => {
       if (result.isConfirmed) {
         fetch(`/admin/api/assignments/${assignmentId}/end`, {

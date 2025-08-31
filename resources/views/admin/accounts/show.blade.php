@@ -16,6 +16,53 @@
 
 @section('page-script')
   @vite(['resources/assets/js/admin/accounts/accounts-show.js'])
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var modal = document.getElementById('assignRiderModal');
+      if (!modal) return;
+
+      // Ensure modal lives under body to avoid aria-hidden conflicts
+      if (modal.parentElement !== document.body) {
+        document.body.appendChild(modal);
+      }
+
+      var ariaObserver;
+      function startObserver() {
+        if (ariaObserver) ariaObserver.disconnect();
+        ariaObserver = new MutationObserver(function () {
+          if (modal.classList.contains('show') && modal.getAttribute('aria-hidden') === 'true') {
+            modal.setAttribute('aria-hidden', 'false');
+          }
+        });
+        ariaObserver.observe(modal, { attributes: true, attributeFilter: ['aria-hidden'] });
+      }
+
+      modal.addEventListener('show.bs.modal', function () {
+        modal.setAttribute('aria-hidden', 'false');
+        modal.setAttribute('aria-modal', 'true');
+        modal.removeAttribute('data-previous-aria-hidden');
+        startObserver();
+      });
+
+      modal.addEventListener('shown.bs.modal', function () {
+        modal.setAttribute('aria-hidden', 'false');
+        var first = modal.querySelector('input, select, textarea, button:not(.btn-close), [tabindex]:not([tabindex="-1"])');
+        if (first) {
+          try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); }
+        }
+      });
+
+      modal.addEventListener('hide.bs.modal', function () {
+        if (document.activeElement) document.activeElement.blur();
+      });
+
+      modal.addEventListener('hidden.bs.modal', function () {
+        if (ariaObserver) { ariaObserver.disconnect(); ariaObserver = null; }
+        modal.setAttribute('aria-hidden', 'true');
+        modal.removeAttribute('aria-modal');
+      });
+    });
+  </script>
 @endsection
 
 @section('content')
@@ -109,7 +156,7 @@
     </div>
   </div>
 
-  <div class="modal fade" id="assignRiderModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="assignRiderModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">

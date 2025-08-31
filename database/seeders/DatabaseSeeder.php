@@ -13,6 +13,7 @@ $this->call([
     RolesAndPermissionsSeeder::class,
     ModelDataSeeder::class, // Este ya crea Riders
     AccountSeeder::class,   // Este crea Accounts y Assignments
+    ForecastSeeder::class,
 ]);
     }
 }

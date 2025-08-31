@@ -23,6 +23,13 @@
       "icon": "menu-icon tf-icons ti tabler-id",
       "slug": "admin-accounts-management",
       "route": "admin.accounts.index"
+    },
+    {
+      "url": "/admin/forecasts",
+      "name": "Forecasts",
+      "icon": "menu-icon tf-icons ti tabler-calendar-time",
+      "slug": "admin-forecasts-management",
+      "route": "admin.forecasts.index"
     }
   ]
 }
